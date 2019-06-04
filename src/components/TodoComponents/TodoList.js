@@ -1,1 +1,2 @@
-//not using this file, Todo is a single class with a function for task list element
+// your components will all go in this `component` directory.
+// feel free to change this component.js into TodoList.js
