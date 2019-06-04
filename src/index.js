@@ -14,5 +14,5 @@ const TASKS = [
       completed: true
     }
   ];
-render(<App tasks={TASKS} />, document.getElementById('root'));
-
+//render(<App tasks={TASKS} />, document.getElementById('root'));
+render(<App  />, document.getElementById('root'));

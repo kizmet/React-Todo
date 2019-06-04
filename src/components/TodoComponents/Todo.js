@@ -1,42 +1,18 @@
 import React, { Component } from 'react';
+//is a component that takes in the `todo` data and displays the task to the screen.
+import TodoList from './TodoList'; 
 
-function TodoTask(props) {   
-    const taskClass = i => {return  i}
+class Todo extends Component  {
+    constructor(props) {
+        super(props);
+        
+    }
+    render() {
         return (
-        <li
-            className={`task ${
-                taskClass(props.completed ? "completed":"active")
-                }`}
-        >
-        {props.task}</li>
-            
-        );
-    
-
-}   
-
-class Todo extends React.Component {
-    render () {
-        const rows = [];
-        let lastTask = null;
-        this.props.tasks.forEach((task) => {
-            if (task.task !== lastTask) {
-                rows.push(
-                    <TodoTask 
-                    tasks={this.props.tasks}
-                    task={task.task}
-                    key={task.id}
-                    completed={task.completed}
-                    />
-                );
-             
-            }
-            lastTask=task.id;
-        });
-        return (
-            <ul>
-                {rows}
-            </ul>
+            <li className={`${this.props.status}`}>
+                {this.props.text}
+                <button>Remove</button>
+                </li>
         )
     }
 }

@@ -1,46 +1,83 @@
-import React from 'react';
-//import TodoList from './components/TodoComponents/TodoList';
-import Todo from "./components/TodoComponents/Todo";
+import React, { Component } from 'react';
+import TodoList from "./components/TodoComponents/TodoList";
 import TodoForm from "./components/TodoComponents/TodoForm";
 
 
-class App extends React.Component {
+
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      completed: false,
-      inputText: "",
-      id:Date.now()
+      items: [],
+      text: ""
+    };
+
+    this.handleText = this.handleText.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    let savedData = localStorage.getItem('items');
+    try {
+      savedData = JSON.parse(savedData);
+      this.setState(Object.assign({}, this.state, savedData));
+    } catch (err) {
+      console.log('error');
     }
   }
-  addToInput(input) {
-    this.setState({ input:  + input });
-};
 
+  componentDidUpdate() {
+    localStorage.setItem('items', JSON.stringify(this.state));
+  }  
+
+  handleText(e) {
+    e.preventDefault();
+    if (!this.state.text.length) {
+      return;
+    }
+    const newItem = {
+      text: this.state.text,
+      completed: false,
+      id: Date.now()
+    };
+    this.setState(state => ({
+      items: state.items.concat(newItem),
+      text: ''
+    }));
+  }
+
+  handleChange(text) {
+    this.setState(state => ({
+      text: text
+    }));
+  }
+
+  handleRemove(e) {}
 
   render() {
+    const {text} = this.state.text;
+    
     return (
       <div>
         <h2>Welcome to your Todo App!</h2>
         <div>
-          <Todo 
-            tasks={this.props.tasks}
-            completed={this.state.completed}
-           />
-          <TodoForm 
-          completed={this.state.completed}
-          inputText={this.state.input}
-          onClick={() => this.addToInput(inputText)}
-          
+          <TodoList
+            items={this.state.items}
           />
+          <div>
+            <TodoForm
+              text={text}
+              onChange={this.handleChange}
+              onSubmit={this.handleText}
+
+
+            />
+          </div>
+
         </div>
       </div>
     );
   }
 }
-
-
-
-
 
 export default App;
