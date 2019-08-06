@@ -4,24 +4,33 @@ import React, { Component } from 'react';
 class TodoForm extends Component {
     constructor(props) {
         super(props);
-        this.handleOnChange = this.handleOnChange.bind(this);
-        this.handleOnSubmit = this.handleOnSubmit.bind(this);
+        this.state = {
+            text: ''
+        }
     }
-    handleOnChange(e) {
-        this.props.onChange(e.target.value);
+    handleOnChange = e => {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
     }
-    handleOnSubmit(e) {
-        this.props.onSubmit(e)
+    handleOnSubmit = e => {
         e.preventDefault();
+        this.props.onSubmit(this.state.text);
+        this.setState({text:''})
+    }
 
+    handleClearCompleted = e => {
+        e.preventDefault();
+        this.props.handleClearCompleted()
     }
     render() {
-        const text = this.props.text;
         return (
+            <>
             <form onSubmit={this.handleOnSubmit}>
                 <label>Add Task
                 <input
-                        value={text}
+                        value={this.state.text}
+                        name='text'
                         id='submit-botton'
                         type='text'
                         placeholder="Add ToDo"
@@ -32,6 +41,9 @@ class TodoForm extends Component {
                 <input type="submit" />
 
             </form>
+            <button type="submit" onClick={this.props.handleClear}>Clear All Todos</button>
+            <button type="submit" onClick={this.props.handleClearCompleted}>Clear All Completed</button>
+            </>
         )
     }
 }

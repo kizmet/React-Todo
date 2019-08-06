@@ -1,79 +1,105 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import TodoList from "./components/TodoComponents/TodoList";
 import TodoForm from "./components/TodoComponents/TodoForm";
-
-
+import SearchForm from "./components/TodoComponents/SearchForm";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       items: [],
-      text: ""
+      searching: false
     };
-
-    this.handleText = this.handleText.bind(this);
-    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
-    let savedData = localStorage.getItem('items');
+    let savedData = localStorage.getItem("items");
     try {
       savedData = JSON.parse(savedData);
-      this.setState(Object.assign({}, this.state, savedData));
+      this.setState(Object.assign({}, this.state.items, savedData));
+      
     } catch (err) {
-      console.log('error');
+      console.log("error");
     }
   }
 
   componentDidUpdate() {
-    localStorage.setItem('items', JSON.stringify(this.state));
-  }  
+    localStorage.setItem("items", JSON.stringify(this.state));
+  }
 
-  handleText(e) {
-    e.preventDefault();
-    if (!this.state.text.length) {
-      return;
-    }
+  handleSubmit = item => {
     const newItem = {
-      text: this.state.text,
+      text: item,
       completed: false,
       id: Date.now()
     };
-    this.setState(state => ({
-      items: state.items.concat(newItem),
-      text: ''
-    }));
-  }
+    this.setState({
+      items: [...this.state.items, newItem]
+    });
+  };
 
-  handleChange(text) {
-    this.setState(state => ({
-      text: text
-    }));
-  }
+  handleDoubleClick = id => {
+    this.setState({
+      items: this.state.items.filter(item => item.id !== id)
+    });
+  };
 
-  handleRemove(e) {}
+  handleClearAll = () => {
+    this.setState({ items: [] });
+  };
+
+  handleClearCompleted = () => {
+    this.setState({
+      items: this.state.items.filter(item => !item.completed)
+    });
+  };
+
+  handleComplete = id => {
+    this.setState({
+      items: this.state.items.map(item => {
+        if (item.id === id) {
+          return {
+            ...item,
+            completed: !item.completed
+          };
+        } else {
+          return item;
+        }
+      })
+    });
+  };
+
+  handleSearch = e => {
+    e.length > 1 ?
+    this.setState({
+      searching: true,
+      filtered: this.state.items.filter(item => item.text.includes(e))
+    })
+    : this.setState({
+      searching: false
+    })
+  };
 
   render() {
-    const {text} = this.state.text;
-    
     return (
       <div>
         <h2>Welcome to your Todo App!</h2>
+        <SearchForm handleSearch={this.handleSearch} />
         <div>
           <TodoList
-            items={this.state.items}
+            items={
+              this.state.searching ? this.state.filtered : this.state.items
+            }
+            handleComplete={this.handleComplete}
+            handleDoubleClick={this.handleDoubleClick}
           />
           <div>
             <TodoForm
-              text={text}
-              onChange={this.handleChange}
-              onSubmit={this.handleText}
-
-
+              onSubmit={this.handleSubmit}
+              handleClear={this.handleClear}
+              handleClearCompleted={this.handleClearCompleted}
             />
           </div>
-
         </div>
       </div>
     );
